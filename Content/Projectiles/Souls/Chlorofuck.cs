@@ -105,10 +105,15 @@ namespace FargowiltasSouls.Content.Projectiles.Souls
                     num406 = 10f / num406;
                     num404 *= num406;
                     num405 *= num406;
+                    int dmg = (int)(Projectile.damage * (modPlayer.ForceEffect<ChlorophyteEnchant>() ? (65f / 35f) : (35f / 35f)));
                     if (Projectile.owner == Main.myPlayer)
-                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(num404, num405), ProjectileID.CrystalLeafShot, Projectile.damage, Projectile.knockBack, Projectile.owner);
-                    Projectile.ai[0] = Cooldown;
+                    {
+                        Projectile p = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, new Vector2(num404, num405), ProjectileID.CrystalLeafShot, dmg, Projectile.knockBack, Projectile.owner);
+                    }
                 }
+
+                // prevents the crystals from becoming out of sync if some don't shoot
+                Projectile.ai[0] = Cooldown;
             }
 
             if (Main.netMode == NetmodeID.Server)
