@@ -56,16 +56,22 @@ Attack speed bonuses are half as effective
         public override Header ToggleHeader => Header.GetHeader<BionomicHeader>();
         public override int ToggleItemType => ModContent.ItemType<WretchedPouch>();
         public override bool ExtraAttackEffect => true;
+
+        public static int[] PouchAllowItems = [
+            ItemID.ButchersChainsaw,
+            ModContent.ItemType<WretchedPouch>()
+        ];
         
         public override void PostUpdateEquips(Player player)
         {
             Player Player = player;
             FargoSoulsPlayer modPlayer = player.FargoSouls();
+            // Main.NewText("test");
 
             if (!Player.controlUseItem && !Player.controlUseTile && modPlayer.WeaponUseTimer <= 6) //remove extra 6 added to the timer, makes it a lot less awkward
                 return;
 
-            if (Player.HeldItem.IsAir || Player.HeldItem.damage <= 0 || Player.HeldItem.pick > 0 || Player.HeldItem.axe > 0 || Player.HeldItem.hammer > 0)
+            if (Player.HeldItem.IsAir || ((Player.HeldItem.damage <= 0 || Player.HeldItem.pick > 0 || Player.HeldItem.axe > 0 || Player.HeldItem.hammer > 0) && !PouchAllowItems.Contains(player.HeldItem.type)))
                 return;
 
             if (!Player.HasBuff(ModContent.BuffType<WretchedHexBuff>()))

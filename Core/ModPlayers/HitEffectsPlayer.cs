@@ -479,10 +479,16 @@ namespace FargowiltasSouls.Core.ModPlayers
 
             TimeSinceHurt = 0;
 
-            if (Player.HasBuff(ModContent.BuffType<TitaniumDRBuff>())
-                && !Player.HasBuff(ModContent.BuffType<TitaniumCDBuff>()))
+            // Idk much abt netcode, but this check may cause desync where other local client doesn't know that another client has the debuff, but not doing this would also cause desync 
+            if (Player.whoAmI == Main.myPlayer) 
             {
-                Player.AddBuff(ModContent.BuffType<TitaniumCDBuff>(), LumUtils.SecondsToFrames(10));
+                info.DamageSource.TryGetCausingEntity(out Entity attacker);
+                if (Player.HasBuff(ModContent.BuffType<TitaniumDRBuff>())
+                    && !Player.HasBuff(ModContent.BuffType<TitaniumCDBuff>())
+                    && TitaniumEffect.CanUseDR(Player, attacker))
+                {
+                    Player.AddBuff(ModContent.BuffType<TitaniumCDBuff>(), LumUtils.SecondsToFrames(10));
+                }
             }
 
             if (NekomiSet && NekomiHitCD <= 0)

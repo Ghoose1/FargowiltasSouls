@@ -63,11 +63,19 @@ This has a cooldown of 10 seconds during which you cannot gain shards
 
         public override float ContactDamageDR(Player player, NPC npc, ref Player.HurtModifiers modifiers)
         {
-            return base.ContactDamageDR(player, npc, ref modifiers);
+            return TitaniumDR(player, npc);
         }
         public override float ProjectileDamageDR(Player player, Projectile projectile, ref Player.HurtModifiers modifiers)
         {
             return TitaniumDR(player, projectile);
+        }
+        public static bool CanUseDR(Player player, Entity attacker) {
+            // prevents dr applying to multiple hits
+            if (player.FargoSouls().TitaniumCD) return false; 
+            // attacker is NPC == contact dmg
+            return attacker is NPC ||
+                attacker is Projectile projectile && projectile.GetSourceNPC() is NPC sourceNPC
+                && player.Distance(sourceNPC.Center) < Math.Max(sourceNPC.width, sourceNPC.height) + 16 * 8;
         }
         public static float TitaniumDR(Player player, Entity attacker)
         {
@@ -76,11 +84,7 @@ This has a cooldown of 10 seconds during which you cannot gain shards
             if (!modPlayer.TitaniumDRBuff)
                 return 0;
 
-            bool canUseDR = attacker is NPC ||
-                attacker is Projectile projectile && projectile.GetSourceNPC() is NPC sourceNPC
-                && player.Distance(sourceNPC.Center) < Math.Max(sourceNPC.width, sourceNPC.height) + 16 * 8;
-
-            if (canUseDR)
+            if (CanUseDR(player, attacker))
             {
                 float diff = 1f - player.endurance;
                 diff *= modPlayer.ForceEffect<TitaniumEnchant>() ? 0.35f : 0.25f;
@@ -95,7 +99,7 @@ This has a cooldown of 10 seconds during which you cannot gain shards
             if (modPlayer.TitaniumCD)
                 return;
 
-            player.AddBuff(306, 600, true, false);
+            player.AddBuff(BuffID.TitaniumStorm, 600, true, false);
             if (player.ownedProjectileCounts[ProjectileID.TitaniumStormShard] < 20)
             {
                 int damage = 50;
