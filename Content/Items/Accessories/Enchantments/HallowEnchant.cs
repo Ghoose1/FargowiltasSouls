@@ -60,8 +60,10 @@ namespace FargowiltasSouls.Content.Items.Accessories.Enchantments
         public static void HealRepel(Player player)
         {
             Item effectItem = player.EffectItem<HallowEffect>();
-            if (effectItem != null || effectItem.type != ModContent.ItemType<HallowEnchant>())
+            if (effectItem == null || effectItem.type != ModContent.ItemType<HallowEnchant>())
+            {
                 return;
+            }
             SoundEngine.PlaySound(SoundID.Item72);
             Particle p = new HallowEnchantBarrier(player.Center, Vector2.Zero, RepelRadius / 160f, 32);
             p.Spawn();
@@ -70,6 +72,15 @@ namespace FargowiltasSouls.Content.Items.Accessories.Enchantments
             {
                 projectile.velocity = Vector2.Normalize(projectile.Center - player.Center) * projectile.velocity.Length();
                 projectile.hostile = false;
+                projectile.friendly = true;
+            }
+        }
+
+        public override void PostUpdate(Player player)
+        {
+            // prevent time heal from persisting after death
+            if (player.dead) {
+                player.FargoSouls().HallowHealTime = 0;
             }
         }
     }
