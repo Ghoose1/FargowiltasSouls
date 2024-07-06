@@ -711,6 +711,15 @@ namespace FargowiltasSouls.Core.ModPlayers
                 RockeaterDistance = EaterLauncher.BaseDistance;
             }
 
+            if (!Player.HasEffect<HuntressEffect>() && HuntressStage > 0) 
+            {
+                HuntressStage = 0;
+            }
+            if (!Player.HasEffect<TinEffect>() && TinCrit > 5) 
+            {
+                TinEffect.TinHurt(Player);
+            }
+
             StatLifePrevious = Player.statLife;
         }
     }
