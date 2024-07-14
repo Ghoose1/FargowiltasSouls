@@ -28,9 +28,9 @@ namespace FargowiltasSouls.Content.Bosses.Lifelight
             Projectile.scale = 1;
             Projectile.timeLeft = 6000;
         }
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) //line collision, needed because of the speed they move at when creating the arena, to form a solid wall
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) 
         {
-            return LumUtils.CircularHitboxCollision(Projectile.Center, projHitbox.Width, targetHitbox);
+            return LumUtils.CircularHitboxCollision(Projectile.Center, projHitbox.Width / 2, targetHitbox);
         }
         private Color GetColor()
         {
@@ -69,8 +69,8 @@ namespace FargowiltasSouls.Content.Bosses.Lifelight
                 Projectile.width = Projectile.height = ExplosionSize;
                 Projectile.Center = Projectile.position;
                 SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
+                SoundEngine.PlaySound(LifeChallenger.RuneSound1 with { PitchRange = (-0.6f, -0.4f) }, Projectile.Center);
 
-                
                 for (int j = 0; j < 32; j++)
                 {
                     Vector2 offset = Main.rand.NextVector2Circular(Projectile.width / 2, Projectile.height / 2);
